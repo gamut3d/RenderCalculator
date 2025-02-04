@@ -13,16 +13,119 @@
         }
     </script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .container { max-width: 400px; margin: auto; }
-        label, input { display: block; width: 100%; margin-bottom: 10px; }
-        button { width: 100%; padding: 10px; cursor: pointer; }
-        .result { margin-top: 15px; font-weight: bold; }
+        :root {
+            --black: #000000;
+            --black-2: #333333;
+            --honeydew: #f3eaf7;
+            --dark-grey: #a1a1a1;
+            --background-light: #e7e7e7;
+            --background-dark: #121212;
+            --text-light: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter Tight', sans-serif;
+            padding: 20px;
+            background-color: var(--background-light);
+            color: var(--black-2);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dark-mode {
+            background-color: var(--background-dark);
+            color: var(--text-light);
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            border: 2px solid var(--black);
+            border-radius: 5px;
+            background-color: #ffffff;
+            color: var(--black-2);
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            background-color: var(--black);
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: var(--dark-grey);
+        }
+        .result {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .description {
+            text-align: left;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .toggle-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .toggle-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--black);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .toggle-button:hover {
+            background-color: var(--black-2);
+            color: var(--text-light);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Render Time Calculator</h2>
+        <div class="description">
+            <p><strong>How to Use:</strong></p>
+            <p>Use this calculator to estimate your total render time or determine how long each frame should take to meet a deadline.</p>
+            <p><strong>Option 1: Calculate Completion Time</strong></p>
+            <ul>
+                <li>Enter your <strong>Frame Start</strong> and <strong>Frame End</strong>.</li>
+                <li>Set your <strong>Render Start Time</strong>.</li>
+                <li>Enter the <strong>Time per Frame</strong> (in seconds).</li>
+                <li>Click <strong>"Calculate Completion Time"</strong> to see when the render will finish.</li>
+            </ul>
+            <p><strong>Option 2: Calculate Time Per Frame</strong></p>
+            <ul>
+                <li>Enter your <strong>Frame Start</strong> and <strong>Frame End</strong>.</li>
+                <li>Set your <strong>Render Start Time</strong> and <strong>Desired Render End Time</strong>.</li>
+                <li>Click <strong>"Calculate Time Per Frame"</strong> to determine the max time each frame can take.</li>
+            </ul>
+        </div>
+        
         <label>Frame Start:</label>
         <input type="number" id="frameStart" value="1">
 
@@ -47,7 +150,21 @@
         <div class="result" id="output"></div>
     </div>
 
+    <div class="toggle-container">
+        <button class="toggle-button" onclick="toggleDarkMode()" id="darkModeButton">⬤</button>
+    </div>
+
     <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const button = document.getElementById('darkModeButton');
+            if (document.body.classList.contains('dark-mode')) {
+                button.innerText = '○';
+            } else {
+                button.innerText = '⬤';
+            }
+        }
+
         function calculateRenderTime() {
             let frameStart = parseInt(document.getElementById('frameStart').value);
             let frameEnd = parseInt(document.getElementById('frameEnd').value);
