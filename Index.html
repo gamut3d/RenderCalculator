@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Render Time Calculator</title>
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(() => console.log("Service Worker Registered"))
+                .catch(err => console.error("Service Worker Failed: ", err));
+        }
+    </script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 400px; margin: auto; }
+        label, input { display: block; width: 100%; margin-bottom: 10px; }
+        button { width: 100%; padding: 10px; cursor: pointer; }
+        .result { margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Render Time Calculator</h2>
+        <label>Frame Start:</label>
+        <input type="number" id="frameStart" value="1">
+
+        <label>Frame End:</label>
+        <input type="number" id="frameEnd" value="240">
+
+        <label>Render Start Time:</label>
+        <input type="time" id="startTime">
+
+        <label>Time per Frame (Seconds):</label>
+        <input type="number" id="secondsPerFrame" value="10">
+
+        <button onclick="calculateRenderTime()">Calculate Completion Time</button>
+
+        <hr>
+
+        <label>Desired Render End Time:</label>
+        <input type="time" id="endTime">
+
+        <button onclick="calculateFrameTime()">Calculate Time Per Frame</button>
+
+        <div class="result" id="output"></div>
+    </div>
+
+    <script>
+        function calculateRenderTime() {
+            let frameStart = parseInt(document.getElementById('frameStart').value);
+            let frameEnd = parseInt(document.getElementById('frameEnd').value);
+            let startTime = document.getElementById('startTime').value;
+            let secondsPerFrame = parseFloat(document.getElementById('secondsPerFrame').value);
+
+            if (!startTime) {
+                document.getElementById('output').innerText = "Please enter a start time.";
+                return;
+            }
+
+            let totalFrames = frameEnd - frameStart + 1;
+            let totalSeconds = totalFrames * secondsPerFrame;
+
+            let startDate = new Date();
+            let [hours, minutes] = startTime.split(":").map(Number);
+            startDate.setHours(hours, minutes, 0, 0);
+
+            let endDate = new Date(startDate.getTime() + totalSeconds * 1000);
+            let formattedEndTime = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            document.getElementById('output').innerText = `Render will finish at: ${formattedEndTime}`;
+        }
+
+        function calculateFrameTime() {
+            let frameStart = parseInt(document.getElementById('frameStart').value);
+            let frameEnd = parseInt(document.getElementById('frameEnd').value);
+            let startTime = document.getElementById('startTime').value;
+            let endTime = document.getElementById('endTime').value;
+
+            if (!startTime || !endTime) {
+                document.getElementById('output').innerText = "Please enter both start and end times.";
+                return;
+            }
+
+            let totalFrames = frameEnd - frameStart + 1;
+            
+            let startDate = new Date();
+            let [startHours, startMinutes] = startTime.split(":").map(Number);
+            startDate.setHours(startHours, startMinutes, 0, 0);
+
+            let endDate = new Date();
+            let [endHours, endMinutes] = endTime.split(":").map(Number);
+            endDate.setHours(endHours, endMinutes, 0, 0);
+            
+            // Handle overnight renders by adding a day if needed
+            if (endDate < startDate) {
+                endDate.setDate(endDate.getDate() + 1);
+            }
+
+            let totalSeconds = (endDate - startDate) / 1000;
+            let secondsPerFrame = totalSeconds / totalFrames;
+
+            document.getElementById('output').innerText = `Each frame should take: ${secondsPerFrame.toFixed(2)} seconds`;
+        }
+    </script>
+</body>
+</html>
